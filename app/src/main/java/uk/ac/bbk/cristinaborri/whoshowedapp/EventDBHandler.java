@@ -1,3 +1,5 @@
+package uk.ac.bbk.cristinaborri.whoshowedapp;
+
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
@@ -33,7 +35,6 @@ public class EventDBHandler extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(TABLE_CREATE);
-
     }
 
     @Override

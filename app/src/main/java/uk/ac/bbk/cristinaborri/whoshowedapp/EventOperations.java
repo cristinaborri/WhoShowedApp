@@ -1,3 +1,5 @@
+package uk.ac.bbk.cristinaborri.whoshowedapp;
+
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -6,6 +8,9 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
 import java.util.ArrayList;
+import java.util.List;
+
+import uk.ac.bbk.cristinaborri.whoshowedapp.EventDBHandler;
 
 /**
  * Created by Cristina Borri
@@ -25,6 +30,7 @@ public class EventOperations {
             EventDBHandler.COLUMN_NAME,
             EventDBHandler.COLUMN_DETAILS
     };
+
     public EventOperations(Context context){
         dbhandler = new EventDBHandler(context);
     }
@@ -32,14 +38,13 @@ public class EventOperations {
     public void open(){
         Log.i(LOGTAG,"Database Opened");
         database = dbhandler.getWritableDatabase();
-
-
     }
+
     public void close(){
         Log.i(LOGTAG, "Database Closed");
         dbhandler.close();
-
     }
+
     public Event addEvent(Event Event){
         ContentValues values  = new ContentValues();
         values.put(EventDBHandler.COLUMN_LOCATION,Event.getLocation());
@@ -49,7 +54,6 @@ public class EventOperations {
         long insertid = database.insert(EventDBHandler.TABLE_EVENT,null,values);
         Event.setId(insertid);
         return Event;
-
     }
 
     // Getting single Event
@@ -59,16 +63,22 @@ public class EventOperations {
         if (cursor != null)
             cursor.moveToFirst();
 
-        Event e = new Event(Long.parseLong(cursor.getString(0)),cursor.getString(1),cursor.getString(2),cursor.getString(3),cursor.getString(4),cursor.getString(5));
+        Event e = new Event(
+                Long.parseLong(cursor.getString(0)),
+                cursor.getString(1),
+                cursor.getString(2),
+                cursor.getString(3),
+                cursor.getString(4)
+        );
         // return Event
         return e;
     }
 
-    public List<Event> getAllEvent() {
+    public List<Event> getAllEvents() {
 
         Cursor cursor = database.query(EventDBHandler.TABLE_EVENT,allColumns,null,null,null, null, null);
 
-        List<Event> event = new ArrayList<>();
+        List<Event> events = new ArrayList<>();
         if(cursor.getCount() > 0){
             while(cursor.moveToNext()){
                 Event event = new Event();
@@ -78,11 +88,11 @@ public class EventOperations {
                 event.setName(cursor.getString(cursor.getColumnIndex(EventDBHandler.COLUMN_NAME)));
                 event.setDetails(cursor.getString(cursor.getColumnIndex(EventDBHandler.COLUMN_DETAILS)));
 
-                event.add(event);
+                events.add(event);
             }
         }
-        // return All Event
-        return event;
+        // return All Events
+        return events;
     }
 
     // Updating Event
@@ -96,12 +106,11 @@ public class EventOperations {
 
         // updating row
         return database.update(EventDBHandler.TABLE_EVENT, values,
-                EventDBHandler.COLUMN_ID + "=?",new String[] { String.valueOf(event.getEmpId())});
+                EventDBHandler.COLUMN_ID + "=?",new String[] { String.valueOf(event.getId())});
     }
 
     // Deleting Event
     public void removeEvent(Event event) {
-
         database.delete(EventDBHandler.TABLE_EVENT, EventDBHandler.COLUMN_ID + "=" + event.getId(), null);
     }
 

@@ -1,15 +1,21 @@
 package uk.ac.bbk.cristinaborri.whoshowedapp;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ListView;
+
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
+
+    private EventOperations eventOperations;
+    List<Event> events;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -19,13 +25,35 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+//        fab.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+//                        .setAction("Action", null).show();
+//            }
+//        });
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                Intent i = new Intent(MainActivity.this,AddUpdateEvent.class);
+                //i.putExtra(EXTRA_ADD_UPDATE, "Add");
+                startActivity(i);
             }
         });
+
+
+
+
+        eventOperations = new EventOperations(this);
+        eventOperations.open();
+        events = eventOperations.getAllEvents();
+        eventOperations.close();
+
+        EventAdapter adapter = new EventAdapter(this, events);
+
+        ListView eventList = (ListView) findViewById(R.id.eventList);
+
+        eventList.setAdapter(adapter);
 
 //        addEmployeeButton.setOnClickListener(new View.OnClickListener() {
 //            @Override
@@ -35,6 +63,7 @@ public class MainActivity extends AppCompatActivity {
 //                startActivity(i);
 //            }
 //        });
+
 
     }
 

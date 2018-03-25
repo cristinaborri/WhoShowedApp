@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="@dimen/view_padding">
+
+    <TextView
+        android:id="@+id/event_name_label"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:labelFor="@+id/edit_event_date"
+        android:text="@string/edit_event_name_label" />
+
+    <EditText
+        android:id="@+id/edit_event_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/noLabel"
+        android:inputType="text" />
+
+    <TextView
+        android:id="@+id/event_date_label"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/edit_event_date_label" />
+
+    <EditText
+        android:id="@+id/edit_event_date"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:hint="@string/noLabel"
+        android:inputType="datetime" />
+
+    <TextView
+        android:id="@+id/event_details_label"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/edit_event_details_label" />
+
+    <EditText
+        android:id="@+id/edit_event_details"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:hint="@string/noLabel"
+        android:inputType="textMultiLine"
+        android:singleLine="false" />
+
+    <TextView
+        android:id="@+id/event_location_label"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/event_location_label" />
+
+    <fragment
+        android:id="@+id/location_autocomplete"
+        android:name="com.google.android.gms.location.places.ui.PlaceAutocompleteFragment"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:layout="?android:attr/textEditSuggestionItemLayout" />
+
+</LinearLayout>

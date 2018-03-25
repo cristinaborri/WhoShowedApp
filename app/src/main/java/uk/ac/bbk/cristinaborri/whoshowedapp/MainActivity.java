@@ -6,86 +6,68 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
-import android.view.Menu;
-import android.view.MenuItem;
+import android.widget.AdapterView;
 import android.widget.ListView;
 
 import java.util.List;
 
+import uk.ac.bbk.cristinaborri.whoshowedapp.activity.EventAddUpdateActivity;
+import uk.ac.bbk.cristinaborri.whoshowedapp.listAdapter.EventsListItemAdapter;
+import uk.ac.bbk.cristinaborri.whoshowedapp.activity.EventViewActivity;
+import uk.ac.bbk.cristinaborri.whoshowedapp.model.Event;
+import uk.ac.bbk.cristinaborri.whoshowedapp.model.EventDAO;
+
+/**
+ * Created by Cristina Borri
+ * This is the main activity of the application
+ */
+
 public class MainActivity extends AppCompatActivity {
 
-    private EventOperations eventOperations;
     List<Event> events;
+    public static final String EXTRA_EVENT_ID = "CristinaBorri.wsa.Event.Id";
+    public static final String EXTRA_EVENT_ADD_UPDATE = "CristinaBorri.wsa.Event.AddEdit";
+    public static final String DATE_FORMAT = "dd/MM/yyyy HH:mm";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        toolbar.setTitle("Events");
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-//        fab.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-//                        .setAction("Action", null).show();
-//            }
-//        });
+        FloatingActionButton fab = findViewById(R.id.add_event_fab);
+
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent i = new Intent(MainActivity.this,AddUpdateEvent.class);
-                //i.putExtra(EXTRA_ADD_UPDATE, "Add");
+                Intent i = new Intent(MainActivity.this, EventAddUpdateActivity.class);
+                i.putExtra(EXTRA_EVENT_ADD_UPDATE, "Add");
                 startActivity(i);
             }
         });
 
-
-
-
-        eventOperations = new EventOperations(this);
+        EventDAO eventOperations = new EventDAO(this);
         eventOperations.open();
         events = eventOperations.getAllEvents();
         eventOperations.close();
 
-        EventAdapter adapter = new EventAdapter(this, events);
+        EventsListItemAdapter adapter = new EventsListItemAdapter(this, events);
 
-        ListView eventList = (ListView) findViewById(R.id.eventList);
+        final ListView eventList = findViewById(uk.ac.bbk.cristinaborri.whoshowedapp.R.id.eventList);
 
         eventList.setAdapter(adapter);
+        eventList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Event listItem = (Event) eventList.getItemAtPosition(position);
 
-//        addEmployeeButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                Intent i = new Intent(MainActivity.this,AddUpdateEmployee.class);
-//                i.putExtra(EXTRA_ADD_UPDATE, "Add");
-//                startActivity(i);
-//            }
-//        });
+                Intent i = new Intent(MainActivity.this, EventViewActivity.class);
+                i.putExtra(EXTRA_EVENT_ID, listItem.getId());
 
-
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
+                startActivity(i);
+            }
+        });
     }
 }

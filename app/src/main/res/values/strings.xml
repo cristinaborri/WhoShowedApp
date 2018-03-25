@@ -1,4 +1,14 @@
 <resources>
     <string name="app_name">WhoShowedApp</string>
     <string name="action_settings">Settings</string>
+    <string name="edit_event_menu_item_label">Edit</string>
+    <string name="delete_event_menu_item_label" />
+    <string name="show_attendees_menu_item_label">Attendees</string>
+    <string name="edit_event_name_label">Event name</string>
+    <string name="edit_event_date_label">Event date</string>
+    <string name="edit_event_details_label">Event details</string>
+    <string name="event_location_label">Event location</string>
+    <string name="save_event_label">Save</string>
+    <string name="noLabel" />
+    <string name="view_event_address_label">Event address</string>
 </resources>

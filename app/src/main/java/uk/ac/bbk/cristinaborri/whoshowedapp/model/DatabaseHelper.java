@@ -6,9 +6,9 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 /**
  * Created by Cristina Borri
- * This class will handle the persistence of the events in the database
+ * This class will handle the persistence of events and attendees in the database
  * it extends SQL lite open helper adding create and update functionality
- * for the event
+ * for the event and the attendees
  */
 public class DatabaseHelper extends SQLiteOpenHelper {
 

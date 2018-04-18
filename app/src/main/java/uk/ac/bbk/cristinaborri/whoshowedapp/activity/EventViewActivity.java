@@ -13,6 +13,12 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.MarkerOptions;
+
 import java.text.SimpleDateFormat;
 import java.util.Locale;
 
@@ -26,7 +32,7 @@ import uk.ac.bbk.cristinaborri.whoshowedapp.model.EventDAO;
  *
  */
 
-public class EventViewActivity extends AppCompatActivity {
+public class EventViewActivity extends AppCompatActivity implements OnMapReadyCallback {
 
     private long eventID;
     private EventDAO eventData;
@@ -66,6 +72,10 @@ public class EventViewActivity extends AppCompatActivity {
                         .setAction("Action", null).show();
             }
         });
+
+        SupportMapFragment mapFragment =
+                (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
+        mapFragment.getMapAsync(this);
     }
 
     @Override
@@ -125,5 +135,16 @@ public class EventViewActivity extends AppCompatActivity {
 
         AlertDialog alert11 = builder1.create();
         alert11.show();
+    }
+
+    /**
+     * This is where we can add markers or lines, add listeners or move the camera. In this case,
+     * we
+     * just add a marker near Africa.
+     */
+    @Override
+    public void onMapReady(GoogleMap map) {
+        map.addMarker(new MarkerOptions().position(event.getLocationCoordinates()).title("Marker"));
+        map.moveCamera(CameraUpdateFactory.newLatLngBounds(event.getLocationViewPort(), 0));
     }
 }

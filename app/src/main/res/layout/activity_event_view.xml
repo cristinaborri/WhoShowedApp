@@ -52,10 +52,11 @@
             android:text="@string/view_event_address_label"
             android:textAppearance="@style/TextAppearance.AppCompat.Caption" />
 
-        <com.google.android.gms.maps.MapView
-            android:id="@+id/event_map_view"
+        <fragment xmlns:android="http://schemas.android.com/apk/res/android"
+            android:id="@+id/map"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="match_parent"
+            class="com.google.android.gms.maps.SupportMapFragment" />
 
     </LinearLayout>
 

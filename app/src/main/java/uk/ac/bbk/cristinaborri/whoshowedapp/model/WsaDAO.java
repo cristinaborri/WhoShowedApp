@@ -6,7 +6,8 @@ import android.util.Log;
 
 /**
  * Created by Cristina Borri
- * This class will provide the methods that will allow to open and close the application database
+ * This class will provide the methods that will allow to open and close the connection to the
+ * application database
  */
 abstract class WsaDAO {
     private static final String LOGTAG = "WSA_DATABASE";

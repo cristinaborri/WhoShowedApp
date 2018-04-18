@@ -27,7 +27,7 @@
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyBxElQ849BffiIeM4z9y5mfb2Xdx1g_yDc" />
 
-        <activity android:name=".activity.AttendeesListActivity"></activity>
+        <activity android:name=".activity.AttendeesListActivity" />
     </application>
 
 </manifest>

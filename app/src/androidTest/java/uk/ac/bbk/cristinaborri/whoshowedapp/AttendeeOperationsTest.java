@@ -41,11 +41,11 @@ public class AttendeeOperationsTest {
         attendee1 = new Attendee();
         attendee1.setName(NAME_ATTENDEE_1);
         attendee1.setEmail(EMAIL_ATTENDEE_1);
-        attendee1.setEventId(EVENT_ID_1);
+        attendee1.init(EVENT_ID_1);
         attendee2 = new Attendee();
         attendee2.setName(NAME_ATTENDEE_2);
         attendee2.setEmail(EMAIL_ATTENDEE_2);
-        attendee2.setEventId(EVENT_ID_1);
+        attendee2.init(EVENT_ID_1);
         attendeeData = new AttendeeDAO(appContext);
         attendeeData.open();
     }
@@ -91,6 +91,17 @@ public class AttendeeOperationsTest {
         List<Attendee> attendees = attendeeData.getEventAttendees(EVENT_ID_1);
         assertEquals(1, attendees.size());
         validateAttendee2(attendees.get(0));
+    }
+
+    @Test
+    public void deleteEventAttendees() throws Exception {
+        attendeeData.addAttendee(attendee1);
+        attendeeData.addAttendee(attendee2);
+        List<Attendee> startingAttendees = attendeeData.getEventAttendees(EVENT_ID_1);
+        assertEquals(2, startingAttendees.size());
+        attendeeData.removeEventAttendees(EVENT_ID_1);
+        List<Attendee> attendees = attendeeData.getEventAttendees(EVENT_ID_1);
+        assertEquals(0, attendees.size());
     }
 
     @Test

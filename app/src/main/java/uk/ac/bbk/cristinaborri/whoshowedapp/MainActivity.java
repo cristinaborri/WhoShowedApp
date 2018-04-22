@@ -27,6 +27,8 @@ public class MainActivity extends AppCompatActivity {
     List<Event> events;
     public static final String EXTRA_EVENT_ID = "CristinaBorri.wsa.Event.Id";
     public static final String EXTRA_EVENT_ADD_UPDATE = "CristinaBorri.wsa.Event.AddEdit";
+    public static final String EXTRA_ATTENDEE_ID = "CristinaBorri.wsa.Attendee.Id";
+    public static final String EXTRA_ATTENDEE_ADD_UPDATE = "CristinaBorri.wsa.Attendee.AddEdit";
     public static final String DATE_FORMAT = "dd/MM/yyyy HH:mm";
 
     @Override
@@ -42,9 +44,9 @@ public class MainActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent i = new Intent(MainActivity.this, EventAddUpdateActivity.class);
-                i.putExtra(EXTRA_EVENT_ADD_UPDATE, "Add");
-                startActivity(i);
+            Intent i = new Intent(MainActivity.this, EventAddUpdateActivity.class);
+            i.putExtra(EXTRA_EVENT_ADD_UPDATE, "Add");
+            startActivity(i);
             }
         });
 
@@ -61,12 +63,12 @@ public class MainActivity extends AppCompatActivity {
         eventList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Event listItem = (Event) eventList.getItemAtPosition(position);
+            Event listItem = (Event) eventList.getItemAtPosition(position);
 
-                Intent i = new Intent(MainActivity.this, EventViewActivity.class);
-                i.putExtra(EXTRA_EVENT_ID, listItem.getId());
+            Intent i = new Intent(MainActivity.this, EventViewActivity.class);
+            i.putExtra(EXTRA_EVENT_ID, listItem.getId());
 
-                startActivity(i);
+            startActivity(i);
             }
         });
     }

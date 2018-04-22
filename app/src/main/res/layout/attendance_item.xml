@@ -10,31 +10,18 @@
         android:orientation="vertical">
 
         <TextView
-            android:id="@+id/listAttendeeName"
+            android:id="@+id/attendance_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/attendee_name_string"
             android:textAppearance="@style/TextAppearance.AppCompat.Headline" />
 
         <TextView
-            android:id="@+id/listAttendeeEmail"
+            android:id="@+id/attendance_email"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/attendee_email_string" />
 
     </LinearLayout>
-
-    <ImageView
-        android:id="@+id/attendance_indicator"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_margin="@dimen/view_padding"
-        android:adjustViewBounds="false"
-        android:background="@android:color/holo_green_dark"
-        android:contentDescription="@string/attended_label"
-        android:cropToPadding="false"
-        android:visibility="visible"
-        app:srcCompat="@android:drawable/ic_menu_myplaces" />
 
 </RelativeLayout>

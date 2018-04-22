@@ -28,6 +28,9 @@
             android:value="AIzaSyBxElQ849BffiIeM4z9y5mfb2Xdx1g_yDc" />
 
         <activity android:name=".activity.AttendeesListActivity" />
+        <activity android:name=".activity.AttendeeAddUpdateActivity" />
+        <activity android:name=".activity.AttendanceActivity" />
+        <activity android:name=".activity.AttendeeViewActivity" />
     </application>
 
 </manifest>

@@ -25,6 +25,7 @@
         android:id="@+id/event_date_label"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:labelFor="@+id/edit_event_date"
         android:text="@string/edit_event_date_label" />
 
     <EditText
@@ -32,7 +33,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:ems="10"
-        android:hint="@string/noLabel"
         android:inputType="datetime" />
 
     <TextView

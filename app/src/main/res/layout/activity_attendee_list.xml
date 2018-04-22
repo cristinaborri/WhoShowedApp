@@ -19,6 +19,6 @@
 
     <include
         android:id="@+id/include"
-        layout="@layout/content_attendees_list" />
+        layout="@layout/content_attendee_list" />
 
 </android.support.design.widget.CoordinatorLayout>

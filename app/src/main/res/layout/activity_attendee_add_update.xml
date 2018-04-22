@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="@dimen/view_padding">
+
+    <TextView
+        android:id="@+id/attendee_name_label"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:labelFor="@+id/edit_attendee_name"
+        android:text="@string/attendee_name_string" />
+
+    <EditText
+        android:id="@+id/edit_attendee_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="text" />
+
+    <TextView
+        android:id="@+id/attendee_email_label"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/attendee_email_string" />
+
+    <EditText
+        android:id="@+id/edit_attendee_email"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:hint="@string/noLabel"
+        android:inputType="textEmailAddress" />
+
+</LinearLayout>

@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.support.annotation.NonNull;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -17,7 +18,10 @@ public class AttendeeDAO extends WsaDAO {
             DatabaseHelper.COLUMN_ID,
             DatabaseHelper.COLUMN_ATTENDEE_NAME,
             DatabaseHelper.COLUMN_ATTENDEE_EMAIL,
-            DatabaseHelper.COLUMN_ATTENDEE_EVENT_ID
+            DatabaseHelper.COLUMN_ATTENDEE_EVENT_ID,
+            DatabaseHelper.COLUMN_ATTENDEE_UID,
+            DatabaseHelper.COLUMN_ATTENDEE_UPDATED_ON,
+            DatabaseHelper.COLUMN_ATTENDEE_ATTENDED
     };
 
     public AttendeeDAO(Context context){
@@ -75,6 +79,28 @@ public class AttendeeDAO extends WsaDAO {
         return events;
     }
 
+    public List<Attendee> getEventConfirmedAttendees(long eventId) {
+
+        Cursor cursor = database.query(
+                DatabaseHelper.TABLE_ATTENDEE,
+                allColumns,
+                DatabaseHelper.COLUMN_ATTENDEE_EVENT_ID + "=? AND " + DatabaseHelper.COLUMN_ATTENDEE_ATTENDED + "=1",
+                new String[]{String.valueOf(eventId)},
+                null,
+                null,
+                DatabaseHelper.COLUMN_ATTENDEE_UPDATED_ON
+        );
+
+        List<Attendee> events = new ArrayList<>();
+        if(cursor.getCount() > 0){
+            while(cursor.moveToNext()){
+                events.add(this.attendeeFromCursor(cursor));
+            }
+        }
+        // return All Attendees
+        return events;
+    }
+
     // Updating Attendee
     public void updateAttendee(Attendee attendee) {
         ContentValues values = prepareAttendeeContentValues(attendee);
@@ -88,11 +114,20 @@ public class AttendeeDAO extends WsaDAO {
         database.delete(DatabaseHelper.TABLE_ATTENDEE, DatabaseHelper.COLUMN_ID + "=" + attendee.getId(), null);
     }
 
+    // Deleting Event Attendees
+    public void removeEventAttendees(long eventId) {
+        database.delete(DatabaseHelper.TABLE_ATTENDEE, DatabaseHelper.COLUMN_ATTENDEE_EVENT_ID + "=" + eventId, null);
+    }
+
     @NonNull
     private ContentValues prepareAttendeeContentValues(Attendee attendee) {
         ContentValues values  = new ContentValues();
         values.put(DatabaseHelper.COLUMN_ATTENDEE_NAME, attendee.getName());
         values.put(DatabaseHelper.COLUMN_ATTENDEE_EMAIL, attendee.getEmail());
+        values.put(DatabaseHelper.COLUMN_ATTENDEE_UID, attendee.getUniqueId());
+        Date updatedOn = attendee.getUpdatedOn() != null ? attendee.getUpdatedOn() : new Date();
+        values.put(DatabaseHelper.COLUMN_ATTENDEE_UPDATED_ON, updatedOn.getTime());
+        values.put(DatabaseHelper.COLUMN_ATTENDEE_ATTENDED, attendee.hasAttended() ? 1 : 0);
         values.put(DatabaseHelper.COLUMN_ATTENDEE_EVENT_ID, attendee.getEventId());
         return values;
     }
@@ -102,6 +137,9 @@ public class AttendeeDAO extends WsaDAO {
         attendee.setId(cursor.getLong(cursor.getColumnIndex(DatabaseHelper.COLUMN_ID)));
         attendee.setName(cursor.getString(cursor.getColumnIndex(DatabaseHelper.COLUMN_ATTENDEE_NAME)));
         attendee.setEmail(cursor.getString(cursor.getColumnIndex(DatabaseHelper.COLUMN_ATTENDEE_EMAIL)));
+        attendee.setUniqueId(cursor.getString(cursor.getColumnIndex(DatabaseHelper.COLUMN_ATTENDEE_UID)));
+        attendee.setUpdatedOn(new Date(cursor.getLong(cursor.getColumnIndex(DatabaseHelper.COLUMN_ATTENDEE_UPDATED_ON))));
+        attendee.setAttended(cursor.getInt(cursor.getColumnIndex(DatabaseHelper.COLUMN_ATTENDEE_ATTENDED)) == 1);
         attendee.setEventId(cursor.getLong(cursor.getColumnIndex(DatabaseHelper.COLUMN_ATTENDEE_EVENT_ID)));
         return attendee;
     }

@@ -1,8 +1,14 @@
 package uk.ac.bbk.cristinaborri.whoshowedapp.model;
 
+import android.util.Base64;
+
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.nio.charset.Charset;
 import java.util.Date;
 
 /**
@@ -113,6 +119,39 @@ public class Event {
 
     public void setDetails(String details) {
         this.details = details;
+    }
+
+    public String jsonSerialize()
+    {
+        JSONObject json = new JSONObject();
+        if(this.getLocationCoordinates() == null) {
+            this.setLocationCoordinates(new LatLng(0,0));
+        }
+        if(this.getDate() == null) {
+            this.setDate(new Date());
+        }
+        if(this.getLocationViewPort() == null) {
+            this.setLocationViewPort(
+                    new LatLngBounds(new LatLng(0,0), new LatLng(0,0))
+            );
+        }
+        try {
+            json.put(DatabaseHelper.COLUMN_LOCATION_LONG, this.getLocationCoordinates().longitude);
+            json.put(DatabaseHelper.COLUMN_LOCATION_LAT, this.getLocationCoordinates().latitude);
+            json.put(DatabaseHelper.COLUMN_LOCATION_ADDRESS, this.getLocationAddress());
+            json.put(DatabaseHelper.COLUMN_LOCATION_NAME, this.getLocationName());
+            json.put(DatabaseHelper.COLUMN_MAP_NE_LONG, this.getLocationViewPort().northeast.longitude);
+            json.put(DatabaseHelper.COLUMN_MAP_NE_LAT, this.getLocationViewPort().northeast.latitude);
+            json.put(DatabaseHelper.COLUMN_MAP_SW_LONG, this.getLocationViewPort().southwest.longitude);
+            json.put(DatabaseHelper.COLUMN_MAP_SW_LAT, this.getLocationViewPort().southwest.latitude);
+            json.put(DatabaseHelper.COLUMN_EVENT_DATE, this.getDate().getTime());
+            json.put(DatabaseHelper.COLUMN_EVENT_NAME, this.getName());
+            json.put(DatabaseHelper.COLUMN_EVENT_DETAILS, this.getDetails());
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        return Base64.encodeToString(json.toString().getBytes(Charset.defaultCharset()), Base64.URL_SAFE);
     }
 
     @Override

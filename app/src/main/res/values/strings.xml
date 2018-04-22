@@ -11,4 +11,9 @@
     <string name="save_event_label">Save</string>
     <string name="noLabel" />
     <string name="view_event_address_label">Event address</string>
+    <string name="attendee_name_string">Attendee Name</string>
+    <string name="attendee_email_string">Attendee Email</string>
+    <string name="attended_label">Attended</string>
+    <string name="unique_code_label">Unique Code to send</string>
+    <string name="unique_code_placeholder">Unique Code</string>
 </resources>

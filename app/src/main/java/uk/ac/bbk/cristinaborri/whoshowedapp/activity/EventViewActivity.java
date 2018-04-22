@@ -5,13 +5,13 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -24,6 +24,7 @@ import java.util.Locale;
 
 import uk.ac.bbk.cristinaborri.whoshowedapp.MainActivity;
 import uk.ac.bbk.cristinaborri.whoshowedapp.R;
+import uk.ac.bbk.cristinaborri.whoshowedapp.model.AttendeeDAO;
 import uk.ac.bbk.cristinaborri.whoshowedapp.model.Event;
 import uk.ac.bbk.cristinaborri.whoshowedapp.model.EventDAO;
 
@@ -35,6 +36,7 @@ import uk.ac.bbk.cristinaborri.whoshowedapp.model.EventDAO;
 public class EventViewActivity extends AppCompatActivity implements OnMapReadyCallback {
 
     private long eventID;
+    private AttendeeDAO attendeeData;
     private EventDAO eventData;
     private Event event;
 
@@ -50,6 +52,7 @@ public class EventViewActivity extends AppCompatActivity implements OnMapReadyCa
         }
 
         eventID = getIntent().getLongExtra(MainActivity.EXTRA_EVENT_ID,0);
+        attendeeData = new AttendeeDAO(this);
         eventData = new EventDAO(this);
         eventData.open();
         event = eventData.getEvent(eventID);
@@ -63,13 +66,15 @@ public class EventViewActivity extends AppCompatActivity implements OnMapReadyCa
         eventLocation.setText(event != null ? event.getLocationName() : null);
         TextView eventAddress = findViewById(R.id.view_event_address);
         eventAddress.setText(event != null ? event.getLocationAddress() : null);
+        eventData.close();
 
         FloatingActionButton fab = findViewById(R.id.start_event_fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                Intent i = new Intent(EventViewActivity.this, AttendanceActivity.class);
+                i.putExtra(MainActivity.EXTRA_EVENT_ID, eventID);
+                startActivity(i);
             }
         });
 
@@ -113,19 +118,23 @@ public class EventViewActivity extends AppCompatActivity implements OnMapReadyCa
     }
 
     private void showDeleteDialog() {
-        AlertDialog.Builder builder1 = new AlertDialog.Builder(EventViewActivity.this);
-        builder1.setMessage("Do you want to delete the event?");
-        builder1.setCancelable(true);
+        AlertDialog.Builder alertBuilder = new AlertDialog.Builder(EventViewActivity.this);
+        alertBuilder.setMessage("Do you want to delete the event?");
+        alertBuilder.setCancelable(true);
 
-        builder1.setPositiveButton(
+        alertBuilder.setPositiveButton(
                 "Yes",
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        dialog.cancel();
+                        attendeeData.removeEventAttendees(event.getId());
+                        eventData.removeEvent(event);
+                        addDeleteToast();
+                        Intent i = new Intent(EventViewActivity.this, MainActivity.class);
+                        startActivity(i);
                     }
                 });
 
-        builder1.setNegativeButton(
+        alertBuilder.setNegativeButton(
                 "No",
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
@@ -133,8 +142,16 @@ public class EventViewActivity extends AppCompatActivity implements OnMapReadyCa
                     }
                 });
 
-        AlertDialog alert11 = builder1.create();
-        alert11.show();
+        AlertDialog removeAlert = alertBuilder.create();
+        removeAlert.show();
+    }
+
+    private void addDeleteToast() {
+        Toast t = Toast.makeText(
+                EventViewActivity.this, "Event "+ event.getName() + " has been removed successfully!",
+                Toast.LENGTH_SHORT
+        );
+        t.show();
     }
 
     /**

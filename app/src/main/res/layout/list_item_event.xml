@@ -8,12 +8,12 @@
         android:id="@+id/listEventName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Event Name"
+        android:text="@string/edit_event_name_label"
         android:textAppearance="@style/TextAppearance.AppCompat.Headline" />
 
     <TextView
         android:id="@+id/listEventDate"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Event Date" />
+        android:text="@string/edit_event_date_label" />
 </LinearLayout>

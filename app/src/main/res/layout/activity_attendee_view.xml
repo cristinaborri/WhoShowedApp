@@ -37,6 +37,12 @@
             android:textAppearance="@style/TextAppearance.AppCompat.Medium"
             android:textStyle="bold" />
 
+        <Button
+            android:id="@+id/copy_to_clipboard"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/copy_to_clipboard_text" />
+
         <TextView
             android:id="@+id/view_attendee_code"
             android:layout_width="match_parent"

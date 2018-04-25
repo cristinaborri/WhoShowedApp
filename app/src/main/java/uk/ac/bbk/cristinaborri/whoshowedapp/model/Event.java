@@ -1,14 +1,11 @@
 package uk.ac.bbk.cristinaborri.whoshowedapp.model;
 
-import android.util.Base64;
-
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.nio.charset.Charset;
 import java.util.Date;
 
 /**
@@ -150,8 +147,7 @@ public class Event {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-
-        return Base64.encodeToString(json.toString().getBytes(Charset.defaultCharset()), Base64.URL_SAFE);
+        return json.toString();
     }
 
     @Override

@@ -1,8 +1,11 @@
 package uk.ac.bbk.cristinaborri.whoshowedapp.model;
 
+import android.util.Base64;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.nio.charset.Charset;
 import java.util.Date;
 import java.util.UUID;
 
@@ -118,7 +121,8 @@ public class Attendee {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        return json.toString();
+
+        return Base64.encodeToString(json.toString().getBytes(Charset.defaultCharset()), Base64.NO_WRAP);
     }
 
     public void init(long eventId)

@@ -16,4 +16,5 @@
     <string name="attended_label">Attended</string>
     <string name="unique_code_label">Unique Code to send</string>
     <string name="unique_code_placeholder">Unique Code</string>
+    <string name="copy_to_clipboard_text">Copy to clipboard</string>
 </resources>

@@ -36,7 +36,6 @@ import uk.ac.bbk.cristinaborri.whoshowedapp.model.EventDAO;
 public class EventViewActivity extends AppCompatActivity implements OnMapReadyCallback {
 
     private long eventID;
-    private AttendeeDAO attendeeData;
     private EventDAO eventData;
     private Event event;
 
@@ -52,7 +51,6 @@ public class EventViewActivity extends AppCompatActivity implements OnMapReadyCa
         }
 
         eventID = getIntent().getLongExtra(MainActivity.EXTRA_EVENT_ID,0);
-        attendeeData = new AttendeeDAO(this);
         eventData = new EventDAO(this);
         eventData.open();
         event = eventData.getEvent(eventID);
@@ -126,8 +124,13 @@ public class EventViewActivity extends AppCompatActivity implements OnMapReadyCa
                 "Yes",
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
+                        AttendeeDAO attendeeData = new AttendeeDAO(EventViewActivity.this);
+                        attendeeData.open();
                         attendeeData.removeEventAttendees(event.getId());
+                        attendeeData.close();
+                        eventData.open();
                         eventData.removeEvent(event);
+                        eventData.close();
                         addDeleteToast();
                         Intent i = new Intent(EventViewActivity.this, MainActivity.class);
                         startActivity(i);
@@ -162,6 +165,10 @@ public class EventViewActivity extends AppCompatActivity implements OnMapReadyCa
     @Override
     public void onMapReady(GoogleMap map) {
         map.addMarker(new MarkerOptions().position(event.getLocationCoordinates()).title("Marker"));
-        map.moveCamera(CameraUpdateFactory.newLatLngBounds(event.getLocationViewPort(), 0));
+        int width = getResources().getDisplayMetrics().widthPixels;
+        int height = getResources().getDisplayMetrics().heightPixels;
+        int padding = (int) (width * 0.12); // offset from edges of the map 12% of screen
+
+        map.moveCamera(CameraUpdateFactory.newLatLngBounds(event.getLocationViewPort(), width, height, padding));
     }
 }

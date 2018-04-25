@@ -1,11 +1,16 @@
 package uk.ac.bbk.cristinaborri.whoshowedapp.activity;
 
+import android.content.ClipData;
+import android.content.ClipboardManager;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -52,6 +57,20 @@ public class AttendeeViewActivity extends AppCompatActivity {
         TextView attendeeCode = findViewById(R.id.view_attendee_code);
         attendeeCode.setText(attendee != null ? attendee.generateUniqueCode(event) : null);
         attendeeData.close();
+
+
+        Button clipboard = findViewById(R.id.copy_to_clipboard);
+        clipboard.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                TextView attendeeCode = findViewById(R.id.view_attendee_code);
+                ClipboardManager clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
+                ClipData clip = ClipData.newPlainText("ISH_CODE", attendeeCode.getText());
+                assert clipboard != null;
+                clipboard.setPrimaryClip(clip);
+            }
+        });
+
     }
 
     @Override

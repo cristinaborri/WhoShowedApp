@@ -3,9 +3,11 @@ package uk.ac.bbk.cristinaborri.whoshowedapp.activity;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -30,6 +32,7 @@ public class AttendeeViewActivity extends AppCompatActivity {
 
     private long attendeeId;
     private Attendee attendee;
+    private AttendeeDAO attendeeData;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,7 +47,7 @@ public class AttendeeViewActivity extends AppCompatActivity {
 
         attendeeId = getIntent().getLongExtra(MainActivity.EXTRA_ATTENDEE_ID,0);
         EventDAO eventData = new EventDAO(this);
-        AttendeeDAO attendeeData = new AttendeeDAO(this);
+        attendeeData = new AttendeeDAO(this);
         attendeeData.open();
         eventData.open();
 
@@ -85,16 +88,17 @@ public class AttendeeViewActivity extends AppCompatActivity {
         Intent i;
         switch (item.getItemId()) {
             case android.R.id.home:
-                i = new Intent(AttendeeViewActivity.this, MainActivity.class);
+                i = new Intent(AttendeeViewActivity.this, AttendeesListActivity.class);
+                i.putExtra(MainActivity.EXTRA_EVENT_ID, attendee.getEventId());
                 startActivity(i);
                 return true;
             case R.id.delete_attendee_menu_item:
                 showDeleteDialog();
                 return true;
             case R.id.edit_attendee_menu_item:
-                i = new Intent(AttendeeViewActivity.this, EventAddUpdateActivity.class);
-                i.putExtra(MainActivity.EXTRA_EVENT_ID, attendeeId);
-                i.putExtra(MainActivity.EXTRA_EVENT_ADD_UPDATE, "Update");
+                i = new Intent(AttendeeViewActivity.this, AttendeeAddUpdateActivity.class);
+                i.putExtra(MainActivity.EXTRA_ATTENDEE_ADD_UPDATE, "Update");
+                i.putExtra(MainActivity.EXTRA_ATTENDEE_ID, attendeeId);
                 startActivity(i);
                 return true;
         }
@@ -103,32 +107,34 @@ public class AttendeeViewActivity extends AppCompatActivity {
     }
 
     private void showDeleteDialog() {
-//        AlertDialog.Builder alertBuilder = new AlertDialog.Builder(AttendeeViewActivity.this);
-//        alertBuilder.setMessage("Do you want to delete the attendee?");
-//        alertBuilder.setCancelable(true);
-//
-//        alertBuilder.setPositiveButton(
-//                "Yes",
-//                new DialogInterface.OnClickListener() {
-//                    public void onClick(DialogInterface dialog, int id) {
-//                    attendeeData.removeEventAttendees(attendee.getId());
-//                    attendeeData.removeEvent(attendee);
-//                    addDeleteToast();
-//                    Intent i = new Intent(AttendeeViewActivity.this, MainActivity.class);
-//                    startActivity(i);
-//                    }
-//                });
-//
-//        alertBuilder.setNegativeButton(
-//                "No",
-//                new DialogInterface.OnClickListener() {
-//                    public void onClick(DialogInterface dialog, int id) {
-//                        dialog.cancel();
-//                    }
-//                });
-//
-//        AlertDialog removeAlert = alertBuilder.create();
-//        removeAlert.show();
+        AlertDialog.Builder alertBuilder = new AlertDialog.Builder(AttendeeViewActivity.this);
+        alertBuilder.setMessage("Do you want to delete the attendee?");
+        alertBuilder.setCancelable(true);
+
+        alertBuilder.setPositiveButton(
+                "Yes",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        attendeeData.open();
+                        attendeeData.removeAttendee(attendee);
+                        attendeeData.close();
+                        addDeleteToast();
+                        Intent i = new Intent(AttendeeViewActivity.this, AttendeesListActivity.class);
+                        i.putExtra(MainActivity.EXTRA_EVENT_ID, attendee.getEventId());
+                        startActivity(i);
+                    }
+                });
+
+        alertBuilder.setNegativeButton(
+                "No",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.cancel();
+                    }
+                });
+
+        AlertDialog removeAlert = alertBuilder.create();
+        removeAlert.show();
     }
 
     private void addDeleteToast() {

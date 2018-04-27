@@ -74,7 +74,9 @@ public class AttendeesListActivity extends AppCompatActivity {
         Intent i;
         switch (item.getItemId()) {
             case android.R.id.home:
-                onBackPressed();
+                i = new Intent(AttendeesListActivity.this, EventViewActivity.class);
+                i.putExtra(MainActivity.EXTRA_EVENT_ID, eventID);
+                startActivity(i);
                 return true;
         }
 

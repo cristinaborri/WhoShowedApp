@@ -57,6 +57,29 @@ public class AttendeeDAO extends WsaDAO {
         return new Attendee();
     }
 
+    // Getting single Attendee by UId
+    public Attendee getAttendeeByUId(String uid) {
+
+        Cursor cursor = database.query(
+                DatabaseHelper.TABLE_ATTENDEE,
+                allColumns,
+                DatabaseHelper.COLUMN_ATTENDEE_UID + "=?",
+                new String[]{uid},
+                null,
+                null,
+                null,
+                null
+        );
+        if (cursor != null) {
+            cursor.moveToFirst();
+
+            Attendee e = this.attendeeFromCursor(cursor);
+            cursor.close();
+            return e;
+        }
+        return null;
+    }
+
     public List<Attendee> getEventAttendees(long eventId) {
 
         Cursor cursor = database.query(

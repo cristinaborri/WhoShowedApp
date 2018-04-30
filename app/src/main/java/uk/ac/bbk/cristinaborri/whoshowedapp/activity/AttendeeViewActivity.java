@@ -61,9 +61,8 @@ public class AttendeeViewActivity extends AppCompatActivity {
         attendeeCode.setText(attendee != null ? attendee.generateUniqueCode(event) : null);
         attendeeData.close();
 
-
-        Button clipboard = findViewById(R.id.copy_to_clipboard);
-        clipboard.setOnClickListener(new View.OnClickListener() {
+        Button clipboardButton = findViewById(R.id.copy_to_clipboard);
+        clipboardButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 TextView attendeeCode = findViewById(R.id.view_attendee_code);
@@ -71,9 +70,13 @@ public class AttendeeViewActivity extends AppCompatActivity {
                 ClipData clip = ClipData.newPlainText("ISH_CODE", attendeeCode.getText());
                 assert clipboard != null;
                 clipboard.setPrimaryClip(clip);
+                Toast t = Toast.makeText(
+                        AttendeeViewActivity.this, "Code copied to clipboard",
+                        Toast.LENGTH_SHORT
+                );
+                t.show();
             }
         });
-
     }
 
     @Override

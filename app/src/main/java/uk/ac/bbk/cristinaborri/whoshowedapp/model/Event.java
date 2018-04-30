@@ -71,7 +71,7 @@ public class Event {
     }
 
     public String getLocationName() {
-        return locationName;
+        return locationName == null ? "" : locationName;
     }
 
     public void setLocationName(String locationName) {
@@ -79,7 +79,7 @@ public class Event {
     }
 
     public String getLocationAddress() {
-        return locationAddress;
+        return locationAddress == null ? "" : locationAddress;
     }
 
     public void setLocationAddress(String locationAddress) {

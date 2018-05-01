@@ -2,7 +2,6 @@ package uk.ac.bbk.cristinaborri.whoshowedapp.activity;
 
 import android.Manifest;
 import android.content.Context;
-import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.CallSuper;
@@ -63,6 +62,7 @@ public class AttendanceActivity extends AppCompatActivity {
     private long eventID;
     private ConnectionsClient mConnectionsClient;
     private Event event;
+    private AttendanceItemAdapter attendanceItemAdapter;
 
     @Override
     protected void onStart() {
@@ -71,6 +71,14 @@ public class AttendanceActivity extends AppCompatActivity {
         if (!hasPermissions(this, REQUIRED_PERMISSIONS)) {
             requestPermissions(REQUIRED_PERMISSIONS, REQUEST_CODE_REQUIRED_PERMISSIONS);
         }
+    }
+
+    @Override
+    protected void onStop() {
+        mConnectionsClient.stopAdvertising();
+        mConnectionsClient.stopAllEndpoints();
+
+        super.onStop();
     }
 
     /** Returns true if the app was granted all the permissions. Otherwise, returns false. */
@@ -105,14 +113,6 @@ public class AttendanceActivity extends AppCompatActivity {
         recreate();
     }
 
-
-    @Override
-    protected void onStop() {
-        mConnectionsClient.stopAllEndpoints();
-
-        super.onStop();
-    }
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -137,11 +137,11 @@ public class AttendanceActivity extends AppCompatActivity {
         attendees = attendeeOperations.getEventConfirmedAttendees(eventID);
         attendeeOperations.close();
 
-        AttendanceItemAdapter adapter = new AttendanceItemAdapter(this, attendees);
+        attendanceItemAdapter = new AttendanceItemAdapter(this, attendees);
 
         final ListView attendeesList = findViewById(R.id.attendance_list);
 
-        attendeesList.setAdapter(adapter);
+        attendeesList.setAdapter(attendanceItemAdapter);
 
         mConnectionsClient = Nearby.getConnectionsClient(this);
         startAdvertising();
@@ -156,6 +156,11 @@ public class AttendanceActivity extends AppCompatActivity {
             attendee.setAttended(true);
             attendeeOperations.updateAttendee(attendee);
             attendees = attendeeOperations.getEventConfirmedAttendees(eventID);
+            // update data in our adapter
+            attendanceItemAdapter.clear();
+            attendanceItemAdapter.addAll(attendees);
+            // fire the event
+            attendanceItemAdapter.notifyDataSetChanged();
         }
         attendeeOperations.close();
     }
@@ -165,14 +170,13 @@ public class AttendanceActivity extends AppCompatActivity {
             new PayloadCallback() {
                 @Override
                 public void onPayloadReceived(@NonNull String endpointId, Payload payload) {
-                    //recordAttendance(new String(Objects.requireNonNull(payload.asBytes()), UTF_8));
-
                     Log.i(TAG, "connection: received: " + new String(Objects.requireNonNull(payload.asBytes()), UTF_8));
-
+                    recordAttendance(new String(Objects.requireNonNull(payload.asBytes()), UTF_8));
+                    mConnectionsClient.sendPayload(endpointId, payload);
                 }
 
                 @Override
-                public void onPayloadTransferUpdate(String endpointId, PayloadTransferUpdate update) { }
+                public void onPayloadTransferUpdate(@NonNull String endpointId, @NonNull PayloadTransferUpdate update) { }
             };
 
     private final ConnectionLifecycleCallback mConnectionLifecycleCallback =
@@ -181,6 +185,7 @@ public class AttendanceActivity extends AppCompatActivity {
                 @Override
                 public void onConnectionInitiated(@NonNull String endpointId, @NonNull ConnectionInfo connectionInfo)
                 {
+                    Log.i(TAG, "connection: accepting connection, id: "+endpointId);
                     // Automatically accept the connection on both sides.
                     mConnectionsClient.acceptConnection(endpointId, mPayloadCallback);
                 }
@@ -219,7 +224,7 @@ public class AttendanceActivity extends AppCompatActivity {
                                         Toast.LENGTH_SHORT
                                 );
                                 t.show();
-                                Log.i(TAG, "connection: advertising endpoint, service_id :"+event.getName());
+                                Log.i(TAG, "connection: advertising endpoint");
                             }
                         })
                 .addOnFailureListener(
@@ -239,7 +244,6 @@ public class AttendanceActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        Intent i;
         switch (item.getItemId()) {
             case android.R.id.home:
                 mConnectionsClient.stopAdvertising();

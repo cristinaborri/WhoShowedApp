@@ -26,7 +26,6 @@ public class AttendeeAddUpdateActivity extends AppCompatActivity {
     private Attendee attendee;
     private AttendeeDAO attendeeData;
     private String mode;
-    private long attendeeID;
     private long eventID;
 
     @Override
@@ -51,7 +50,7 @@ public class AttendeeAddUpdateActivity extends AppCompatActivity {
 
         if(mode.equals("Update")){
             toolbarTitle = "Update Attendee";
-            attendeeID = getIntent().getLongExtra(MainActivity.EXTRA_ATTENDEE_ID, 0);
+            long attendeeID = getIntent().getLongExtra(MainActivity.EXTRA_ATTENDEE_ID, 0);
             initializeAttendee(attendeeID);
             eventID = attendee.getEventId();
         }

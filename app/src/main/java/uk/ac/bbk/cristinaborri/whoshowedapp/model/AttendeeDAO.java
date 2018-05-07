@@ -20,7 +20,7 @@ public class AttendeeDAO extends WsaDAO {
             DatabaseHelper.COLUMN_ATTENDEE_EMAIL,
             DatabaseHelper.COLUMN_ATTENDEE_EVENT_ID,
             DatabaseHelper.COLUMN_ATTENDEE_UID,
-            DatabaseHelper.COLUMN_ATTENDEE_UPDATED_ON,
+            DatabaseHelper.COLUMN_ATTENDEE_ATTENDED_ON,
             DatabaseHelper.COLUMN_ATTENDEE_ATTENDED
     };
 
@@ -111,7 +111,7 @@ public class AttendeeDAO extends WsaDAO {
                 new String[]{String.valueOf(eventId)},
                 null,
                 null,
-                DatabaseHelper.COLUMN_ATTENDEE_UPDATED_ON
+                DatabaseHelper.COLUMN_ATTENDEE_ATTENDED_ON
         );
 
         List<Attendee> events = new ArrayList<>();
@@ -148,8 +148,8 @@ public class AttendeeDAO extends WsaDAO {
         values.put(DatabaseHelper.COLUMN_ATTENDEE_NAME, attendee.getName());
         values.put(DatabaseHelper.COLUMN_ATTENDEE_EMAIL, attendee.getEmail());
         values.put(DatabaseHelper.COLUMN_ATTENDEE_UID, attendee.getUniqueId());
-        Date updatedOn = attendee.getUpdatedOn() != null ? attendee.getUpdatedOn() : new Date();
-        values.put(DatabaseHelper.COLUMN_ATTENDEE_UPDATED_ON, updatedOn.getTime());
+        Date attendedOn = attendee.getAttendedOn() != null ? attendee.getAttendedOn() : new Date();
+        values.put(DatabaseHelper.COLUMN_ATTENDEE_ATTENDED_ON, attendedOn.getTime());
         values.put(DatabaseHelper.COLUMN_ATTENDEE_ATTENDED, attendee.hasAttended() ? 1 : 0);
         values.put(DatabaseHelper.COLUMN_ATTENDEE_EVENT_ID, attendee.getEventId());
         return values;
@@ -161,7 +161,7 @@ public class AttendeeDAO extends WsaDAO {
         attendee.setName(cursor.getString(cursor.getColumnIndex(DatabaseHelper.COLUMN_ATTENDEE_NAME)));
         attendee.setEmail(cursor.getString(cursor.getColumnIndex(DatabaseHelper.COLUMN_ATTENDEE_EMAIL)));
         attendee.setUniqueId(cursor.getString(cursor.getColumnIndex(DatabaseHelper.COLUMN_ATTENDEE_UID)));
-        attendee.setUpdatedOn(new Date(cursor.getLong(cursor.getColumnIndex(DatabaseHelper.COLUMN_ATTENDEE_UPDATED_ON))));
+        attendee.setAttendedOn(new Date(cursor.getLong(cursor.getColumnIndex(DatabaseHelper.COLUMN_ATTENDEE_ATTENDED_ON))));
         attendee.setAttended(cursor.getInt(cursor.getColumnIndex(DatabaseHelper.COLUMN_ATTENDEE_ATTENDED)) == 1);
         attendee.setEventId(cursor.getLong(cursor.getColumnIndex(DatabaseHelper.COLUMN_ATTENDEE_EVENT_ID)));
         return attendee;

@@ -9,27 +9,15 @@ import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.MenuItem;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import com.google.android.gms.nearby.Nearby;
-import com.google.android.gms.nearby.connection.AdvertisingOptions;
-import com.google.android.gms.nearby.connection.ConnectionInfo;
-import com.google.android.gms.nearby.connection.ConnectionLifecycleCallback;
-import com.google.android.gms.nearby.connection.ConnectionResolution;
-import com.google.android.gms.nearby.connection.ConnectionsClient;
-import com.google.android.gms.nearby.connection.Payload;
-import com.google.android.gms.nearby.connection.PayloadCallback;
-import com.google.android.gms.nearby.connection.PayloadTransferUpdate;
 import com.google.android.gms.nearby.connection.Strategy;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 
 import java.util.List;
-import java.util.Objects;
 
+import uk.ac.bbk.cristinaborri.whoshowedapp.AttendanceService;
 import uk.ac.bbk.cristinaborri.whoshowedapp.MainActivity;
 import uk.ac.bbk.cristinaborri.whoshowedapp.R;
 import uk.ac.bbk.cristinaborri.whoshowedapp.listAdapter.AttendanceItemAdapter;
@@ -38,11 +26,8 @@ import uk.ac.bbk.cristinaborri.whoshowedapp.model.AttendeeDAO;
 import uk.ac.bbk.cristinaborri.whoshowedapp.model.Event;
 import uk.ac.bbk.cristinaborri.whoshowedapp.model.EventDAO;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
-
 public class AttendanceActivity extends AppCompatActivity {
 
-    private static final String TAG = "WhoShowedApp.Attendance";
     private static final Strategy STRATEGY = Strategy.P2P_STAR;
 
     private static final String[] REQUIRED_PERMISSIONS =
@@ -60,9 +45,8 @@ public class AttendanceActivity extends AppCompatActivity {
     List<Attendee> attendees;
 
     private long eventID;
-    private ConnectionsClient mConnectionsClient;
-    private Event event;
     private AttendanceItemAdapter attendanceItemAdapter;
+    private AttendanceService attendanceService;
 
     @Override
     protected void onStart() {
@@ -75,9 +59,7 @@ public class AttendanceActivity extends AppCompatActivity {
 
     @Override
     protected void onStop() {
-        mConnectionsClient.stopAdvertising();
-        mConnectionsClient.stopAllEndpoints();
-
+        attendanceService.stopAdvertising();
         super.onStop();
     }
 
@@ -122,7 +104,7 @@ public class AttendanceActivity extends AppCompatActivity {
 
         EventDAO eventData = new EventDAO(this);
         eventData.open();
-        event = eventData.getEvent(eventID);
+        Event event = eventData.getEvent(eventID);
         eventData.close();
 
         ActionBar toolbar = getSupportActionBar();
@@ -143,17 +125,18 @@ public class AttendanceActivity extends AppCompatActivity {
 
         attendeesList.setAdapter(attendanceItemAdapter);
 
-        mConnectionsClient = Nearby.getConnectionsClient(this);
-        startAdvertising();
+        attendanceService = new AttendanceService(this);
+
+        attendanceService.startAdvertising(event.getName());
     }
 
-    private void recordAttendance(String uid) {
+    public void recordAttendance(String uid) {
         AttendeeDAO attendeeOperations = new AttendeeDAO(this);
         attendeeOperations.open();
 
         Attendee attendee = attendeeOperations.getAttendeeByUId(uid);
         if (attendee != null && !attendee.hasAttended()) {
-            attendee.setAttended(true);
+            attendee.attend();
             attendeeOperations.updateAttendee(attendee);
             attendees = attendeeOperations.getEventConfirmedAttendees(eventID);
             // update data in our adapter
@@ -165,88 +148,11 @@ public class AttendanceActivity extends AppCompatActivity {
         attendeeOperations.close();
     }
 
-    // Callbacks for receiving payloads
-    private final PayloadCallback mPayloadCallback =
-            new PayloadCallback() {
-                @Override
-                public void onPayloadReceived(@NonNull String endpointId, Payload payload) {
-                    Log.i(TAG, "connection: received: " + new String(Objects.requireNonNull(payload.asBytes()), UTF_8));
-                    recordAttendance(new String(Objects.requireNonNull(payload.asBytes()), UTF_8));
-                    mConnectionsClient.sendPayload(endpointId, payload);
-                }
-
-                @Override
-                public void onPayloadTransferUpdate(@NonNull String endpointId, @NonNull PayloadTransferUpdate update) { }
-            };
-
-    private final ConnectionLifecycleCallback mConnectionLifecycleCallback =
-            new ConnectionLifecycleCallback() {
-
-                @Override
-                public void onConnectionInitiated(@NonNull String endpointId, @NonNull ConnectionInfo connectionInfo)
-                {
-                    Log.i(TAG, "connection: accepting connection, id: "+endpointId);
-                    // Automatically accept the connection on both sides.
-                    mConnectionsClient.acceptConnection(endpointId, mPayloadCallback);
-                }
-
-                @Override
-                public void onConnectionResult(@NonNull String endpointId, ConnectionResolution result)
-                {
-                    if (result.getStatus().isSuccess()) {
-                        Log.i(TAG, "connection: connection successful");
-                    } else {
-                        Log.i(TAG, "connection: connection failed");
-                    }
-                }
-
-                @Override
-                public void onDisconnected(@NonNull String endpointId) {
-                    // We've been disconnected from this endpoint. No more data can be
-                    // sent or received.
-                    Log.i(TAG, "connection: disconnected");
-                }
-            };
-
-    private void startAdvertising() {
-        mConnectionsClient.startAdvertising(
-                "register",
-                event.getName(),
-                mConnectionLifecycleCallback,
-                new AdvertisingOptions(STRATEGY))
-                .addOnSuccessListener(
-                        new OnSuccessListener<Void>() {
-                            @Override
-                            public void onSuccess(Void unusedResult) {
-                                // We're advertising!
-                                Toast t = Toast.makeText(
-                                        AttendanceActivity.this, "Listening",
-                                        Toast.LENGTH_SHORT
-                                );
-                                t.show();
-                                Log.i(TAG, "connection: advertising endpoint");
-                            }
-                        })
-                .addOnFailureListener(
-                        new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception e) {
-                                Log.e(TAG, "connection: error advertising endpoint: "+ e.getMessage());
-                                // We were unable to start advertising.
-                                Toast t = Toast.makeText(
-                                        AttendanceActivity.this, "Failed to start listening for attendees",
-                                        Toast.LENGTH_SHORT
-                                );
-                                t.show();
-                            }
-                        });
-    }
-
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                mConnectionsClient.stopAdvertising();
+                attendanceService.stopAdvertising();
                 onBackPressed();
                 return true;
         }

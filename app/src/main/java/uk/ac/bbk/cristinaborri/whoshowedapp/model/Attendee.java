@@ -38,7 +38,7 @@ public class Attendee {
     /**
      * This is the date of the last update
      */
-    private Date updatedOn;
+    private Date attendedOn;
     /**
      * This is the field recoding attendance
      */
@@ -86,12 +86,12 @@ public class Attendee {
 
     public void setUniqueId(String uniqueId) { this.uniqueId = uniqueId; }
 
-    public Date getUpdatedOn() {
-        return updatedOn;
+    public Date getAttendedOn() {
+        return attendedOn;
     }
 
-    public void setUpdatedOn(Date updatedOn) {
-        this.updatedOn = updatedOn;
+    public void setAttendedOn(Date attendedOn) {
+        this.attendedOn = attendedOn;
     }
 
     public boolean hasAttended() {
@@ -104,7 +104,7 @@ public class Attendee {
 
     public void attend() {
         setAttended(true);
-        setUpdatedOn(new Date());
+        setAttendedOn(new Date());
     }
 
     private void initUUID()
@@ -130,7 +130,6 @@ public class Attendee {
         setEventId(eventId);
         initUUID();
         setAttended(false);
-        setUpdatedOn(new Date());
     }
 
     @Override

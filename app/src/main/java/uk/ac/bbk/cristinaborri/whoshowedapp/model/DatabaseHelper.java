@@ -37,7 +37,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     static final String COLUMN_ATTENDEE_EMAIL = "email";
     static final String COLUMN_ATTENDEE_UID = "uid";
     static final String COLUMN_ATTENDEE_EVENT_ID = "event_id";
-    static final String COLUMN_ATTENDEE_UPDATED_ON = "updated_on";
+    static final String COLUMN_ATTENDEE_ATTENDED_ON = "attended_on";
     static final String COLUMN_ATTENDEE_ATTENDED = "attended";
 
     private static final String TABLE_EVENT_CREATE = "CREATE TABLE " + TABLE_EVENT + " (" +
@@ -46,7 +46,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             COLUMN_LOCATION_LAT + " DOUBLE, " +
             COLUMN_LOCATION_NAME + " TEXT, " +
             COLUMN_LOCATION_ADDRESS + " TEXT, " +
-            COLUMN_MAP_SW_LAT + " DOUBLE, " +
+            COLUMN_MAP_SW_LAT + " DOUBLE§, " +
             COLUMN_MAP_SW_LONG + " DOUBLE, " +
             COLUMN_MAP_NE_LAT + " DOUBLE, " +
             COLUMN_MAP_NE_LONG + " DOUBLE, " +
@@ -61,7 +61,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             COLUMN_ATTENDEE_EMAIL + " TEXT, " +
             COLUMN_ATTENDEE_UID + " TEXT, " +
             COLUMN_ATTENDEE_EVENT_ID + " INT, " +
-            COLUMN_ATTENDEE_UPDATED_ON + " LONG, " +
+            COLUMN_ATTENDEE_ATTENDED_ON + " LONG, " +
             COLUMN_ATTENDEE_ATTENDED + " INTEGER, " +
             "FOREIGN KEY(" + COLUMN_ATTENDEE_EVENT_ID + ") REFERENCES " + TABLE_EVENT + "(id) " +
             ")";

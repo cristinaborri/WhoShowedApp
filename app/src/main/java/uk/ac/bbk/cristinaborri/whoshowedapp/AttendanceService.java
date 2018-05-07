@@ -23,6 +23,11 @@ import uk.ac.bbk.cristinaborri.whoshowedapp.activity.AttendanceActivity;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
+/**
+ * Created by Cristina Borri
+ * This class will provide the code to manage the attendance service
+ * using Google NearBy Connections
+ */
 public class AttendanceService {
 
     private final AttendanceActivity activity;
@@ -54,6 +59,7 @@ public class AttendanceService {
                 }
             };
 
+    // Callbacks for the connection events
     private final ConnectionLifecycleCallback mConnectionLifecycleCallback =
             new ConnectionLifecycleCallback() {
 
@@ -81,6 +87,7 @@ public class AttendanceService {
                 }
             };
 
+    // Begins the advertising of the event
     public void startAdvertising(String serviceName) {
 
         mConnectionsClient.startAdvertising(
@@ -116,6 +123,7 @@ public class AttendanceService {
                         });
     }
 
+    // Stops the advertising of the event
     public void stopAdvertising() {
         Log.i(TAG, "connection: stop advertising");
         mConnectionsClient.stopAdvertising();

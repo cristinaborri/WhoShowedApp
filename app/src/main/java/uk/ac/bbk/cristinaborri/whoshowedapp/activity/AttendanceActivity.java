@@ -13,8 +13,6 @@ import android.view.MenuItem;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import com.google.android.gms.nearby.connection.Strategy;
-
 import java.util.List;
 
 import uk.ac.bbk.cristinaborri.whoshowedapp.AttendanceService;
@@ -27,8 +25,6 @@ import uk.ac.bbk.cristinaborri.whoshowedapp.model.Event;
 import uk.ac.bbk.cristinaborri.whoshowedapp.model.EventDAO;
 
 public class AttendanceActivity extends AppCompatActivity {
-
-    private static final Strategy STRATEGY = Strategy.P2P_STAR;
 
     private static final String[] REQUIRED_PERMISSIONS =
             new String[] {

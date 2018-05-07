@@ -46,7 +46,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             COLUMN_LOCATION_LAT + " DOUBLE, " +
             COLUMN_LOCATION_NAME + " TEXT, " +
             COLUMN_LOCATION_ADDRESS + " TEXT, " +
-            COLUMN_MAP_SW_LAT + " DOUBLE§, " +
+            COLUMN_MAP_SW_LAT + " DOUBLE, " +
             COLUMN_MAP_SW_LONG + " DOUBLE, " +
             COLUMN_MAP_NE_LAT + " DOUBLE, " +
             COLUMN_MAP_NE_LONG + " DOUBLE, " +
